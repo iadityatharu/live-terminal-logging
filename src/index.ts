@@ -23,7 +23,7 @@ function liveLogger(options: LoggerOptions = {}) {
   }
 
   if (!loggerProcess) {
-    loggerProcess = fork(path.join(__dirname, "loggerProcess.js"));
+    loggerProcess = fork(path.join(__dirname, "logger.js"));
   }
 
   return (req: Request, res: Response, next: NextFunction) => {
