@@ -1,0 +1,42 @@
+{
+  "name": "live-terminal-logger",
+  "version": "1.0.0",
+  "description": "live-terminal-logger is a Node.js middleware that provides real-time color-coded logging of HTTP requests and responses in a separate terminal. It masks sensitive data like passwords and tokens and allows customizable logging levels based on status codes. Ideal for development environments, this package helps developers monitor API traffic live, ensuring secure and efficient logging.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "example": "ts-node-dev --respawn --transpile-only ./src/server.ts",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iadityatharu/live-terminal-logging.git"
+  },
+  "author": "Aditya Tharu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iadityatharu/live-terminal-logging/issues"
+  },
+  "homepage": "https://github.com/iadityatharu/live-terminal-logging#readme",
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.14.1",
+    "@types/supertest": "^6.0.3",
+    "jest": "^29.7.0",
+    "supertest": "^7.1.0",
+    "ts-jest": "^29.3.2",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "express": "^5.1.0"
+  }
+}
