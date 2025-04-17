@@ -23,7 +23,7 @@ class LiveLogger {
     initLoggerProcess() {
         try {
             if (!this.loggerProcess) {
-                const loggerPath = path_1.default.join(__dirname, "loggerProcess.js");
+                const loggerPath = path_1.default.join(__dirname, "LoggerWorker.js");
                 this.loggerProcess = (0, child_process_1.fork)(loggerPath, { execArgv: [] });
                 this.loggerProcess.on("error", (err) => {
                     console.error("[Logger Error]:", err);

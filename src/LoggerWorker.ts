@@ -1,15 +1,7 @@
 import chalk from "chalk";
+import { LogData } from "./LoggerTypes";
 
 process.title = "Live Logger";
-
-interface LogData {
-  method: string;
-  url: string;
-  status: number;
-  time: string;
-  timestamp: string;
-  body: Record<string, unknown>;
-}
 
 class LoggerWorker {
   constructor() {
@@ -49,4 +41,5 @@ class LoggerWorker {
     console.log(color(`[${timestamp}] ${method} ${url} ${status} - ${time}ms`));
   }
 }
+
 new LoggerWorker();

@@ -32,7 +32,7 @@ class LiveLogger {
   private initLoggerProcess() {
     try {
       if (!this.loggerProcess) {
-        const loggerPath = path.join(__dirname, "loggerProcess.js");
+        const loggerPath = path.join(__dirname, "LoggerWorker.js");
         this.loggerProcess = fork(loggerPath, { execArgv: [] });
 
         this.loggerProcess.on("error", (err) => {

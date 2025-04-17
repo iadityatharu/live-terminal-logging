@@ -1,5 +1,6 @@
 import express, { Application, Request, Response } from "express";
-import LiveLogger from "./index";
+import LiveLogger from "./LiveLogger";
+
 class Server {
   private app: Application;
   private readonly PORT: number = 3000;
@@ -42,6 +43,14 @@ class Server {
       console.log(`🚀 Server running at http://localhost:${this.PORT}`);
     });
   }
+
+  // Expose the app for testing purposes (direct access to the app instance)
+  public getApp(): Application {
+    return this.app;
+  }
 }
 
-new Server();
+// Create the server instance but don't export it directly
+const serverInstance = new Server();
+
+export default serverInstance;
