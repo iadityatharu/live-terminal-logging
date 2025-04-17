@@ -31,6 +31,10 @@ class Server {
     this.app.post("/error", (_req: Request, res: Response) => {
       res.status(500).json({ error: "Oops! Something went wrong." });
     });
+    this.app.patch("/patch", (_req: Request, res: Response) => {
+      res.status(200).json({ message: "Patch request successful!" });
+      return;
+    });
   }
 
   private startServer(): void {
