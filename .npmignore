@@ -3,6 +3,4 @@ node_modules/
 build/
 test/
 pnpm-lock.yaml
-dist/server.js
 jest.config.js
-tsconfig.json

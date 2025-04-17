@@ -39,11 +39,9 @@ class Server {
             console.log(`🚀 Server running at http://localhost:${this.PORT}`);
         });
     }
-    // Expose the app for testing purposes (direct access to the app instance)
     getApp() {
         return this.app;
     }
 }
-// Create the server instance but don't export it directly
 const serverInstance = new Server();
 exports.default = serverInstance;

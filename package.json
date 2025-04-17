@@ -1,5 +1,5 @@
 {
-  "name": "live-terminal-logger",
+  "name": "live-response-time",
   "version": "1.0.0",
   "description": "live-terminal-logger is a Node.js middleware that provides real-time color-coded logging of HTTP requests and responses in a separate terminal. It masks sensitive data like passwords and tokens and allows customizable logging levels based on status codes. Ideal for development environments, this package helps developers monitor API traffic live, ensuring secure and efficient logging.",
   "main": "dist/LiveLogger.js",
