@@ -44,13 +44,11 @@ class Server {
     });
   }
 
-  // Expose the app for testing purposes (direct access to the app instance)
   public getApp(): Application {
     return this.app;
   }
 }
 
-// Create the server instance but don't export it directly
 const serverInstance = new Server();
 
 export default serverInstance;
