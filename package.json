@@ -7,7 +7,7 @@
   "files": [
     "dist/LiveLogger.js",
     "dist/LoggerWorker.js",
-    "LoggerTypes.js",
+    "dist/LoggerTypes.js",
     "README.md"
   ],
   "scripts": {
