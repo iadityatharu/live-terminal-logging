@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist",
+    "dist/index.js",
+    "dist/loggerProcess.js",
     "README.md"
   ],
   "scripts": {
