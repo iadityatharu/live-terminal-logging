@@ -8,53 +8,100 @@ interface LoggerOptions {
   disabledInProd?: boolean;
 }
 
-let loggerProcess: ChildProcess | null = null;
+class LiveLogger {
+  private loggerProcess: ChildProcess | null = null;
+  private readonly filterStatusAbove: number;
+  private readonly maskFields: string[];
+  private readonly disabledInProd: boolean;
+  private readonly isProd: boolean;
 
-function liveLogger(options: LoggerOptions = {}) {
-  const {
-    filterStatusAbove = 100,
-    maskFields = ["password", "authorization"],
-    disabledInProd = true,
-  } = options;
+  constructor(options: LoggerOptions = {}) {
+    this.filterStatusAbove = options.filterStatusAbove ?? 100;
+    this.maskFields = options.maskFields?.map((f) => f.toLowerCase()) ?? [
+      "password",
+      "authorization",
+    ];
+    this.disabledInProd = options.disabledInProd ?? true;
+    this.isProd = process.env.NODE_ENV === "production";
 
-  const isProd = process.env.NODE_ENV === "production";
-  if (isProd && disabledInProd) {
-    return (_req: Request, _res: Response, next: NextFunction) => next();
+    if (!(this.isProd && this.disabledInProd)) {
+      this.initLoggerProcess();
+    }
   }
 
-  if (!loggerProcess) {
-    loggerProcess = fork(path.join(__dirname, "loggerProcess.js"));
+  private initLoggerProcess() {
+    try {
+      if (!this.loggerProcess) {
+        const loggerPath = path.join(__dirname, "loggerProcess.js");
+        this.loggerProcess = fork(loggerPath, { execArgv: [] });
+
+        this.loggerProcess.on("error", (err) => {
+          console.error("[Logger Error]:", err);
+          this.loggerProcess = null;
+        });
+
+        this.loggerProcess.on("exit", (code, signal) => {
+          console.warn(`[Logger Exit]: code=${code}, signal=${signal}`);
+          this.loggerProcess = null;
+        });
+      }
+    } catch (err) {
+      console.error("[Logger Init Error]:", err);
+      this.loggerProcess = null;
+    }
   }
 
-  return (req: Request, res: Response, next: NextFunction) => {
-    const startTime = Date.now();
+  private deepMask(obj: any): any {
+    if (typeof obj !== "object" || obj === null) return obj;
 
-    res.on("finish", () => {
-      if (res.statusCode < filterStatusAbove) return;
+    const result: any = Array.isArray(obj) ? [] : {};
+    for (const key in obj) {
+      const value = obj[key];
+      if (this.maskFields.includes(key.toLowerCase())) {
+        result[key] = "[MASKED]";
+      } else if (typeof value === "object" && value !== null) {
+        result[key] = this.deepMask(value);
+      } else {
+        result[key] = value;
+      }
+    }
+    return result;
+  }
 
-      const duration = Date.now() - startTime;
+  public middleware() {
+    if (this.isProd && this.disabledInProd) {
+      return (_req: Request, _res: Response, next: NextFunction) => next();
+    }
 
-      const safeBody: Record<string, unknown> = { ...req.body };
-      maskFields.forEach((field) => {
-        if (field in safeBody) {
-          safeBody[field] = "[MASKED]";
+    return (req: Request, res: Response, next: NextFunction) => {
+      const startTime = Date.now();
+
+      res.on("finish", () => {
+        if (res.statusCode < this.filterStatusAbove || !this.loggerProcess)
+          return;
+
+        const duration = Date.now() - startTime;
+        const safeBody = this.deepMask(req.body);
+
+        const logData = {
+          method: req.method,
+          url: req.originalUrl,
+          status: res.statusCode,
+          time: duration.toFixed(2),
+          timestamp: new Date().toISOString(),
+          body: safeBody,
+        };
+
+        try {
+          this.loggerProcess.send(logData);
+        } catch (err) {
+          console.error("[Logger Send Error]:", err);
         }
       });
 
-      const logData = {
-        method: req.method,
-        url: req.originalUrl,
-        status: res.statusCode,
-        time: duration.toFixed(2),
-        timestamp: new Date().toISOString(),
-        body: safeBody,
-      };
-
-      loggerProcess?.send(logData);
-    });
-
-    next();
-  };
+      next();
+    };
+  }
 }
 
-export = liveLogger;
+export default LiveLogger;

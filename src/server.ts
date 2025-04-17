@@ -1,24 +1,43 @@
-import express from "express";
-import liveLogger from ".";
+import express, { Application, Request, Response } from "express";
+import LiveLogger from "./index";
+class Server {
+  private app: Application;
+  private readonly PORT: number = 3000;
 
-const app = express();
-app.use(express.json());
-app.use(
-  liveLogger({
-    filterStatusAbove: 100,
-    maskFields: ["password"],
-    disabledInProd: false,
-  })
-);
+  constructor() {
+    this.app = express();
+    this.configureMiddleware();
+    this.defineRoutes();
+    this.startServer();
+  }
 
-app.get("/", (_req, res) => {
-  res.status(200).send("Hello, World!");
-});
+  private configureMiddleware(): void {
+    this.app.use(express.json());
 
-app.post("/error", (_req, res) => {
-  res.status(500).json({ error: "Oops! Something went wrong." });
-});
+    const logger = new LiveLogger({
+      filterStatusAbove: 100,
+      maskFields: ["password"],
+      disabledInProd: false,
+    });
 
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
-});
+    this.app.use(logger.middleware());
+  }
+
+  private defineRoutes(): void {
+    this.app.get("/", (_req: Request, res: Response) => {
+      res.status(200).send("Hello, World!");
+    });
+
+    this.app.post("/error", (_req: Request, res: Response) => {
+      res.status(500).json({ error: "Oops! Something went wrong." });
+    });
+  }
+
+  private startServer(): void {
+    this.app.listen(this.PORT, () => {
+      console.log(`🚀 Server running at http://localhost:${this.PORT}`);
+    });
+  }
+}
+
+new Server();

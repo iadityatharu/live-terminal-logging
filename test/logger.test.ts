@@ -1,5 +1,5 @@
 import { fork } from "child_process";
-import liveLogger from "../src/index"; // Adjust the path as necessary
+import LiveLogger from "../src/index"; // Adjust path if necessary
 
 jest.mock("child_process", () => ({
   fork: jest.fn(() => ({
@@ -8,23 +8,25 @@ jest.mock("child_process", () => ({
   })),
 }));
 
-describe("liveLogger middleware", () => {
+describe("LiveLogger Middleware (Class-Based)", () => {
   const mockSend = jest.fn();
   const mockFork = fork as jest.Mock;
 
   beforeEach(() => {
     mockFork.mockReturnValue({ send: mockSend } as any);
-    process.env.NODE_ENV = ""; // Not production
+    process.env.NODE_ENV = "";
     mockSend.mockClear();
   });
 
   it("should return a middleware function", () => {
-    const middleware = liveLogger();
+    const loggerInstance = new LiveLogger();
+    const middleware = loggerInstance.middleware();
     expect(typeof middleware).toBe("function");
   });
 
   it("should not log if status is below filter threshold", () => {
-    const middleware = liveLogger({ filterStatusAbove: 400 });
+    const loggerInstance = new LiveLogger({ filterStatusAbove: 400 });
+    const middleware = loggerInstance.middleware();
 
     const req = {
       method: "GET",
@@ -47,7 +49,8 @@ describe("liveLogger middleware", () => {
   });
 
   it("should mask fields and send log to logger process", () => {
-    const middleware = liveLogger({ maskFields: ["password"] });
+    const loggerInstance = new LiveLogger({ maskFields: ["password"] });
+    const middleware = loggerInstance.middleware();
 
     const req = {
       method: "POST",
