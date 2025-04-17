@@ -1,9 +1,9 @@
 import request from "supertest";
-import serverInstance from "../src/server"; // Import the server instance
+import serverInstance from "../src/server";
 
 describe("Server", () => {
   it("should respond with Hello, World! on GET /", async () => {
-    const response = await request(serverInstance.getApp()) // Using getApp() to get the express app instance
+    const response = await request(serverInstance.getApp()) 
       .get("/")
       .expect("Content-Type", /text\/html/)
       .expect(200);
@@ -12,7 +12,7 @@ describe("Server", () => {
   });
 
   it("should handle POST /error and log it with status 500", async () => {
-    const response = await request(serverInstance.getApp()) // Using getApp() to get the express app instance
+    const response = await request(serverInstance.getApp()) 
       .post("/error")
       .expect("Content-Type", /json/)
       .expect(500);
@@ -21,7 +21,7 @@ describe("Server", () => {
   });
 
   it("should handle PATCH /patch and log it with status 200", async () => {
-    const response = await request(serverInstance.getApp()) // Using getApp() to get the express app instance
+    const response = await request(serverInstance.getApp()) 
       .patch("/patch")
       .expect("Content-Type", /json/)
       .expect(200);
